@@ -239,7 +239,7 @@ const features = ref([
                         </span>
                     </div>
                     <p class="text-gray-400">
-                        © 2024 SIPCall. Built with Laravel & Vue.js. Powered by Twilio.
+                        © 2025 SIPCall. Built with Laravel & Vue.js. Powered by Twilio.
                     </p>
                 </div>
             </div>
