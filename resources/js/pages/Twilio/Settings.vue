@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm, usePage } from '@inertiajs/vue3';
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -35,6 +35,10 @@ interface Props {
 const props = defineProps<Props>();
 const $page = usePage();
 
+// Debug: Check what we're getting from the backend
+console.log('Props settings:', props.settings);
+console.log('Custom greeting from props:', props.settings.custom_greeting);
+
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Twilio Settings',
@@ -57,8 +61,8 @@ const form = useForm({
 });
 
 const submit = () => {
-    console.log('Form data before submit:', form.data());
-    console.log('SMS Forwarding Enabled:', form.sms_forwarding_enabled);
+    console.log('Form data:', form.data());
+    console.log('Custom greeting:', form.custom_greeting);
     form.post(route('twilio.settings.update'), {
         preserveScroll: true,
     });
@@ -71,11 +75,6 @@ const callActionOptions = [
 
 const isConfigured = computed(() => {
     return Boolean(props.settings.twilio_phone_number);
-});
-
-// Debug: Watch for changes to the SMS forwarding setting
-watch(() => form.sms_forwarding_enabled, (newValue) => {
-    console.log('SMS Forwarding enabled changed to:', newValue);
 });
 </script>
 
