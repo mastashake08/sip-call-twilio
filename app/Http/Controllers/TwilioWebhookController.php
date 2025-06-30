@@ -154,6 +154,7 @@ class TwilioWebhookController extends Controller
 
         } catch (\Exception $e) {
             // Log error
+            dd($e);
             Log::error('Twilio SMS webhook error: ' . $e->getMessage());
             if (isset($user)) {
                 WebhookLog::create([
