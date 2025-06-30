@@ -69,6 +69,7 @@ class TwilioWebhookController extends Controller
                 $dial->sip($sipUri, [
                     'username' => $twilioSettings->sip_username,
                     'password' => $twilioSettings->sip_password,
+                    'region' => 'us1',
                 ]);
                 } else {
                     $dial->sip($sipUri);
