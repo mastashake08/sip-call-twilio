@@ -64,20 +64,15 @@ class TwilioWebhookController extends Controller
                 $sipUri = $twilioSettings->sip_endpoint;
                 if ($twilioSettings->sip_username && $twilioSettings->sip_password) {
                     // Parse the SIP endpoint to inject credentials
-                    $parsedUri = parse_url($sipUri);
-                    if ($parsedUri && isset($parsedUri['scheme']) && $parsedUri['scheme'] === 'sip') {
-                        $userInfo = $twilioSettings->sip_username . ':' . $twilioSettings->sip_password;
-                        $sipUri = $parsedUri['scheme'] . '://' . $userInfo . '@' . $parsedUri['host'];
-                        if (isset($parsedUri['port'])) {
-                            $sipUri .= ':' . $parsedUri['port'];
-                        }
-                        if (isset($parsedUri['path'])) {
-                            $sipUri .= $parsedUri['path'];
-                        }
-                    }
-                }
+                    
                 
-                $dial->sip($sipUri);
+                $dial->sip($sipUri, [
+                    'username' => $twilioSettings->sip_username,
+                    'password' => $twilioSettings->sip_password,
+                ]);
+                } else {
+                    $dial->sip($sipUri);
+                }
             } else {
                 $response->say('No forwarding configured. Please contact support.');
             }
