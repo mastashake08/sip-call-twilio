@@ -244,6 +244,5 @@ const features = ref([
                 </div>
             </div>
         </footer>
-               
     </div>
 </template>
