@@ -6,7 +6,7 @@ use App\Events\CallContactRequested;
 use Twilio\Rest\Client;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\Queue\ShouldQueue;
-
+use Twilio\TwiML\VoiceResponse;
 class HandleCallContact implements ShouldQueue
 {
     /**
@@ -30,16 +30,19 @@ class HandleCallContact implements ShouldQueue
             );
 
             // Create a call based on user's settings
-            $webhookUrl = config('app.url') . '/api/webhooks/twilio/voice';
+            
+            $response = new VoiceResponse();
+            $dial = $response->dial('', ['timeout' => 30]);
+            $dial->number($twilioSettings->forward_to_phone);
             
             $call = $twilio->calls->create(
                 $contact->phone_number, // to
-                $twilioSettings->twilio_phone_number, // from
+                $twilioSettings->twilio_phone_number, 
                 [
-                    'url' => $webhookUrl,
-                    'method' => 'POST',
+                    'twiml' => $response,
                 ]
             );
+            
 
             Log::info("Call initiated", [
                 'call_sid' => $call->sid,
