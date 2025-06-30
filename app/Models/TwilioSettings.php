@@ -15,6 +15,8 @@ class TwilioSettings extends Model
         'twilio_phone_number',
         'forward_to_phone',
         'sip_endpoint',
+        'sip_username',
+        'sip_password',
         'call_action',
         'sms_forwarding_enabled',
         'custom_greeting',
@@ -22,6 +24,7 @@ class TwilioSettings extends Model
 
     protected $casts = [
         'sms_forwarding_enabled' => 'boolean',
+        'sip_password' => 'encrypted',
     ];
 
     /**

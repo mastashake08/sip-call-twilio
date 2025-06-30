@@ -34,10 +34,24 @@ class TwilioSettingsController extends Controller
             'twilio_phone_number' => 'nullable|string|max:20',
             'forward_to_phone' => 'nullable|string|max:20',
             'sip_endpoint' => 'nullable|string|max:255',
+            'sip_username' => 'nullable|string|max:100',
+            'sip_password' => 'nullable|string|max:255',
             'call_action' => 'required|in:dial_phone,dial_sip',
             'sms_forwarding_enabled' => 'nullable|boolean',
             'custom_greeting' => 'nullable|string|max:500',
         ]);
+
+        // Custom validation: if SIP credentials are provided, both username and password should be present
+        if ($request->call_action === 'dial_sip') {
+            if (!empty($validated['sip_username']) || !empty($validated['sip_password'])) {
+                if (empty($validated['sip_username']) || empty($validated['sip_password'])) {
+                    return back()->withErrors([
+                        'sip_username' => 'Both username and password are required for SIP authentication.',
+                        'sip_password' => 'Both username and password are required for SIP authentication.',
+                    ]);
+                }
+            }
+        }
 
         // Ensure sms_forwarding_enabled has a default value if not provided
         $validated['sms_forwarding_enabled'] = $validated['sms_forwarding_enabled'] ?? false;

@@ -58,7 +58,25 @@ class TwilioWebhookController extends Controller
                 $dial->number($twilioSettings->forward_to_phone);
             } elseif ($twilioSettings->call_action === 'dial_sip' && $twilioSettings->sip_endpoint) {
                 $dial = $response->dial('', ['timeout' => 30]);
-                $dial->sip($twilioSettings->sip_endpoint);
+                
+                // Build SIP URI with authentication if provided
+                $sipUri = $twilioSettings->sip_endpoint;
+                if ($twilioSettings->sip_username && $twilioSettings->sip_password) {
+                    // Parse the SIP endpoint to inject credentials
+                    $parsedUri = parse_url($sipUri);
+                    if ($parsedUri && isset($parsedUri['scheme']) && $parsedUri['scheme'] === 'sip') {
+                        $userInfo = $twilioSettings->sip_username . ':' . $twilioSettings->sip_password;
+                        $sipUri = $parsedUri['scheme'] . '://' . $userInfo . '@' . $parsedUri['host'];
+                        if (isset($parsedUri['port'])) {
+                            $sipUri .= ':' . $parsedUri['port'];
+                        }
+                        if (isset($parsedUri['path'])) {
+                            $sipUri .= $parsedUri['path'];
+                        }
+                    }
+                }
+                
+                $dial->sip($sipUri);
             } else {
                 $response->say('No forwarding configured. Please contact support.');
             }

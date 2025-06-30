@@ -21,6 +21,8 @@ interface TwilioSettings {
     twilio_phone_number?: string;
     forward_to_phone?: string;
     sip_endpoint?: string;
+    sip_username?: string;
+    sip_password?: string;
     call_action: 'dial_phone' | 'dial_sip';
     sms_forwarding_enabled: boolean;
     custom_greeting?: string;
@@ -47,6 +49,8 @@ const form = useForm({
     twilio_phone_number: props.settings.twilio_phone_number || '',
     forward_to_phone: props.settings.forward_to_phone || '',
     sip_endpoint: props.settings.sip_endpoint || '',
+    sip_username: props.settings.sip_username || '',
+    sip_password: props.settings.sip_password || '',
     call_action: props.settings.call_action || 'dial_phone',
     sms_forwarding_enabled: props.settings.sms_forwarding_enabled ?? true,
     custom_greeting: props.settings.custom_greeting || '',
@@ -184,6 +188,48 @@ watch(() => form.sms_forwarding_enabled, (newValue) => {
                                 </div>
                             </div>
 
+                            <!-- SIP Authentication Fields (only show when SIP is selected) -->
+                            <div v-show="form.call_action === 'dial_sip'" class="space-y-4">
+                                <div class="p-4 bg-blue-50 border border-blue-200 rounded-md">
+                                    <h4 class="text-sm font-medium text-blue-900 mb-2">SIP Authentication</h4>
+                                    <p class="text-xs text-blue-700">
+                                        If your SIP endpoint requires authentication, provide the username and password below. 
+                                        Leave empty if your SIP endpoint doesn't require authentication.
+                                    </p>
+                                </div>
+                                
+                                <div class="grid gap-4 md:grid-cols-2">
+                                    <div class="space-y-2">
+                                        <Label for="sip_username">SIP Username (Optional)</Label>
+                                        <Input
+                                            id="sip_username"
+                                            v-model="form.sip_username"
+                                            placeholder="username"
+                                            class="font-mono"
+                                        />
+                                        <InputError :message="form.errors.sip_username" />
+                                        <p class="text-xs text-muted-foreground">
+                                            Username for SIP authentication
+                                        </p>
+                                    </div>
+
+                                    <div class="space-y-2">
+                                        <Label for="sip_password">SIP Password (Optional)</Label>
+                                        <Input
+                                            id="sip_password"
+                                            v-model="form.sip_password"
+                                            type="password"
+                                            placeholder="••••••••"
+                                            class="font-mono"
+                                        />
+                                        <InputError :message="form.errors.sip_password" />
+                                        <p class="text-xs text-muted-foreground">
+                                            Password for SIP authentication
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="space-y-2">
                                 <Label for="custom_greeting">Custom Greeting (Optional)</Label>
                                 <Textarea
@@ -220,7 +266,7 @@ watch(() => form.sms_forwarding_enabled, (newValue) => {
                                     </p>
                                 </div>
                                 <Switch
-                                    v-model:checked="form.sms_forwarding_enabled"
+                                    v-model="form.sms_forwarding_enabled"
                                 />
                             </div>
                             <InputError :message="form.errors.sms_forwarding_enabled" />
@@ -246,7 +292,7 @@ watch(() => form.sms_forwarding_enabled, (newValue) => {
                                         <Input
                                             :value="voiceUrl"
                                             readonly
-                                            class="font-mono text-sm text-black"
+                                            class="font-mono text-sm text-gray-500 dark:text-gray-400 "
                                         />
                                         <Badge variant="secondary">POST</Badge>
                                     </div>
@@ -258,7 +304,7 @@ watch(() => form.sms_forwarding_enabled, (newValue) => {
                                         <Input
                                             :value="smsUrl"
                                             readonly
-                                            class="font-mono text-sm text-black"
+                                            class="font-mono text-sm text-gray-500 dark:text-gray-400 "
                                         />
                                         <Badge variant="secondary">POST</Badge>
                                     </div>
