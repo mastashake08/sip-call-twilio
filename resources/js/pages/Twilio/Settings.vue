@@ -42,8 +42,8 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const smsUrl = computed(() => `${$page.props.ziggy.url}/webhooks/twilio/sms`);
-const voiceUrl = computed(() => `${$page.props.ziggy.url}/webhooks/twilio/voice`);
+const smsUrl = route('twilio.webhook.sms');
+const voiceUrl = route('twilio.webhook.voice');
 
 const form = useForm({
     twilio_phone_number: props.settings.twilio_phone_number || '',
