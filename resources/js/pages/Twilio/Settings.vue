@@ -35,10 +35,6 @@ interface Props {
 const props = defineProps<Props>();
 const $page = usePage();
 
-// Debug: Check what we're getting from the backend
-console.log('Props settings:', props.settings);
-console.log('Custom greeting from props:', props.settings.custom_greeting);
-
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Twilio Settings',
@@ -289,9 +285,12 @@ const isConfigured = computed(() => {
                                     <Label class="text-sm font-medium">Voice Webhook URL</Label>
                                     <div class="flex items-center gap-2 mt-1">
                                         <Input
-                                            :value="voiceUrl"
+                                            id="voice-webhook"
+                                            type="url"
+                                            name="voice-webhook"
+                                            v-model="voiceUrl"
                                             readonly
-                                            class="font-mono text-sm text-gray-500 dark:text-gray-400 "
+                                            class="font-mono text-sm !text-gray-600 dark:!text-gray-300 bg-gray-50 dark:bg-gray-800"
                                         />
                                         <Badge variant="secondary">POST</Badge>
                                     </div>
@@ -301,9 +300,10 @@ const isConfigured = computed(() => {
                                     <Label class="text-sm font-medium">SMS Webhook URL</Label>
                                     <div class="flex items-center gap-2 mt-1">
                                         <Input
-                                            :value="smsUrl"
+                                            id="sms-webhook" type="url" name="sms-webhook"
+                                            v-model="smsUrl"
                                             readonly
-                                            class="font-mono text-sm text-gray-500 dark:text-gray-400 "
+                                            class="font-mono text-sm !text-gray-600 dark:!text-gray-300 bg-gray-50 dark:bg-gray-800"
                                         />
                                         <Badge variant="secondary">POST</Badge>
                                     </div>
