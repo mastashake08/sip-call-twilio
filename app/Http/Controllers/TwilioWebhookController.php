@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\WebhookLog;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Twilio\Rest\Client;
 use Twilio\TwiML\VoiceResponse;
 use Twilio\TwiML\MessagingResponse;
@@ -153,6 +154,7 @@ class TwilioWebhookController extends Controller
 
         } catch (\Exception $e) {
             // Log error
+            Log::error('Twilio SMS webhook error: ' . $e->getMessage());
             if (isset($user)) {
                 WebhookLog::create([
                     'user_id' => $user->id ?? null,
