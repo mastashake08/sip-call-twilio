@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-
+use App\Http\Controllers\ContactController;
 Route::get('/', function () {
     return Inertia::render('Welcome');
 })->name('home');
@@ -32,6 +32,14 @@ Route::get('dashboard', function () {
         'stats' => $stats
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// Contact management routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::resource('contacts', ContactController::class);
+    Route::post('contacts/{contact}/toggle-favorite', [ContactController::class, 'toggleFavorite'])->name('contacts.toggle-favorite');
+    Route::post('contacts/{contact}/call', [ContactController::class, 'call'])->name('contacts.call');
+    Route::post('contacts/{contact}/sms', [ContactController::class, 'sms'])->name('contacts.sms');
+});
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

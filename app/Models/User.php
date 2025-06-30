@@ -58,6 +58,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the user's contacts.
+     */
+    public function contacts(): HasMany
+    {
+        return $this->hasMany(Contact::class);
+    }
+
+    /**
      * Get the user's webhook logs.
      */
     public function webhookLogs(): HasMany
