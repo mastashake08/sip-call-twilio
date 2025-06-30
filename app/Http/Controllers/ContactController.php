@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CallContactRequested;
+use App\Events\SmsContactRequested;
 use App\Models\Contact;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
@@ -161,13 +163,21 @@ class ContactController extends Controller
             ], 400);
         }
 
-        // This would typically integrate with Twilio to initiate a call
-        // For now, we'll return instructions for the user
-        return response()->json([
+        // Prepare the response
+        $response = response()->json([
             'message' => "Calling {$contact->name} @ {$contact->formatted_phone} from your configured phone.",
             'contact' => $contact,
             'action' => 'call'
         ]);
+
+        // Dispatch the event after the response is sent
+        $response->headers->set('X-Accel-Buffering', 'no');
+        
+        // Use terminate callback to dispatch event after response
+        CallContactRequested::dispatch($contact, $user);
+
+
+        return $response;
     }
 
     /**
@@ -190,13 +200,21 @@ class ContactController extends Controller
             ], 400);
         }
 
-        // This would typically send an SMS via Twilio
-        // For now, we'll return a success message
-        return response()->json([
+        // Prepare the response
+        $response = response()->json([
             'message' => "SMS would be sent to {$contact->name} at {$contact->formatted_phone}",
             'contact' => $contact,
             'sms_content' => $validated['message'],
             'action' => 'sms'
         ]);
+
+        // Dispatch the event after the response is sent
+        $response->headers->set('X-Accel-Buffering', 'no');
+        
+        // Use terminate callback to dispatch event after response
+        SmsContactRequested::dispatch($contact, $user, $validated['message']);
+        
+
+        return $response;
     }
 }

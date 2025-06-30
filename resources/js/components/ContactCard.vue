@@ -105,20 +105,18 @@ const sendSms = async () => {
     
     isLoading.value = true;
     try {
-        const response = await fetch(route('contacts.sms', props.contact.id), {
-            method: 'POST',
+        const response = await axios.post(route('contacts.sms', props.contact.id), {
+                message: smsMessage.value,
+            },{
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
             },
-            body: JSON.stringify({
-                message: smsMessage.value,
-            }),
         });
         
-        const data = await response.json();
-        
-        if (response.ok) {
+        const data = await response.data;
+
+        if (response.status === 200) {
             toast({
                 title: "SMS Status",
                 description: data.message,
