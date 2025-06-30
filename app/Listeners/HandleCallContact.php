@@ -30,7 +30,7 @@ class HandleCallContact implements ShouldQueue
             );
 
             // Create a call based on user's settings
-            $webhookUrl = config('app.url') . '/webhooks/twilio/voice';
+            $webhookUrl = config('app.url') . '/api/webhooks/twilio/voice';
             
             $call = $twilio->calls->create(
                 $contact->phone_number, // to
