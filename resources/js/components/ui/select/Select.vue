@@ -1,36 +1,35 @@
 <script setup lang="ts">
-import { type HTMLAttributes, computed } from 'vue'
+import { type HTMLAttributes, ref, watch } from 'vue'
 import {
-  SelectContent,
-  SelectItem,
-  SelectItemIndicator,
-  SelectItemText,
   SelectRoot,
-  SelectTrigger,
-  SelectValue,
-  SelectViewport,
   type SelectRootEmits,
   type SelectRootProps,
-  useForwardPropsEmits,
 } from 'reka-ui'
-import { cn } from '@/lib/utils'
 
-const props = defineProps<SelectRootProps & {
+interface Props extends Omit<SelectRootProps, 'modelValue'> {
   class?: HTMLAttributes['class']
+  modelValue?: string
+}
+
+const props = defineProps<Props>()
+const emits = defineEmits<{
+  'update:modelValue': [value: string]
 }>()
 
-const emits = defineEmits<SelectRootEmits>()
+const internalValue = ref(props.modelValue)
 
-const delegatedProps = computed(() => {
-  const { class: _, ...delegated } = props
-  return delegated
+watch(() => props.modelValue, (newValue) => {
+  internalValue.value = newValue
 })
 
-const forwarded = useForwardPropsEmits(delegatedProps, emits)
+const handleValueChange = (value: string) => {
+  internalValue.value = value
+  emits('update:modelValue', value)
+}
 </script>
 
 <template>
-  <SelectRoot v-bind="forwarded">
+  <SelectRoot :model-value="internalValue" @update:model-value="handleValueChange">
     <slot />
   </SelectRoot>
 </template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Head, useForm } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { computed, watch } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,6 +31,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const $page = usePage();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -38,6 +39,9 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/twilio/settings',
     },
 ];
+
+const smsUrl = computed(() => `${$page.props.ziggy.url}/webhooks/twilio/sms`);
+const voiceUrl = computed(() => `${$page.props.ziggy.url}/webhooks/twilio/voice`);
 
 const form = useForm({
     twilio_phone_number: props.settings.twilio_phone_number || '',
@@ -49,6 +53,8 @@ const form = useForm({
 });
 
 const submit = () => {
+    console.log('Form data before submit:', form.data());
+    console.log('SMS Forwarding Enabled:', form.sms_forwarding_enabled);
     form.post(route('twilio.settings.update'), {
         preserveScroll: true,
     });
@@ -61,6 +67,11 @@ const callActionOptions = [
 
 const isConfigured = computed(() => {
     return Boolean(props.settings.twilio_phone_number);
+});
+
+// Debug: Watch for changes to the SMS forwarding setting
+watch(() => form.sms_forwarding_enabled, (newValue) => {
+    console.log('SMS Forwarding enabled changed to:', newValue);
 });
 </script>
 
@@ -233,9 +244,9 @@ const isConfigured = computed(() => {
                                     <Label class="text-sm font-medium">Voice Webhook URL</Label>
                                     <div class="flex items-center gap-2 mt-1">
                                         <Input
-                                            :value="`${$page.props.ziggy.url}/webhooks/twilio/voice`"
+                                            :value="voiceUrl"
                                             readonly
-                                            class="font-mono text-sm"
+                                            class="font-mono text-sm text-black"
                                         />
                                         <Badge variant="secondary">POST</Badge>
                                     </div>
@@ -245,9 +256,9 @@ const isConfigured = computed(() => {
                                     <Label class="text-sm font-medium">SMS Webhook URL</Label>
                                     <div class="flex items-center gap-2 mt-1">
                                         <Input
-                                            :value="`${$page.props.ziggy.url}/webhooks/twilio/sms`"
+                                            :value="smsUrl"
                                             readonly
-                                            class="font-mono text-sm"
+                                            class="font-mono text-sm text-black"
                                         />
                                         <Badge variant="secondary">POST</Badge>
                                     </div>

@@ -6,6 +6,7 @@ use App\Models\TwilioSettings;
 use App\Models\WebhookLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -34,13 +35,16 @@ class TwilioSettingsController extends Controller
             'forward_to_phone' => 'nullable|string|max:20',
             'sip_endpoint' => 'nullable|string|max:255',
             'call_action' => 'required|in:dial_phone,dial_sip',
-            'sms_forwarding_enabled' => 'boolean',
+            'sms_forwarding_enabled' => 'nullable|boolean',
             'custom_greeting' => 'nullable|string|max:500',
         ]);
 
+        // Ensure sms_forwarding_enabled has a default value if not provided
+        $validated['sms_forwarding_enabled'] = $validated['sms_forwarding_enabled'] ?? false;
+
         $user = Auth::user();
         
-        $user->twilioSettings()->updateOrCreate(
+        $settings = $user->twilioSettings()->updateOrCreate(
             ['user_id' => $user->id],
             $validated
         );
@@ -57,7 +61,7 @@ class TwilioSettingsController extends Controller
         $logs = $user->webhookLogs()
             ->orderBy('created_at', 'desc')
             ->paginate(20);
-
+       
         return Inertia::render('Twilio/Logs', [
             'logs' => $logs,
         ]);

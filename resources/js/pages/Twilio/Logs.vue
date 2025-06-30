@@ -293,7 +293,7 @@ const goToPage = (page: number) => {
 
                         <div class="space-y-2">
                             <Label for="type">Type</Label>
-                            <Select v-model="selectedType">
+                            <Select v-model:value="selectedType">
                                 <SelectTrigger>
                                     <SelectValue placeholder="All types" />
                                 </SelectTrigger>
@@ -308,7 +308,7 @@ const goToPage = (page: number) => {
 
                         <div class="space-y-2">
                             <Label for="status">Status</Label>
-                            <Select v-model="selectedStatus">
+                            <Select v-model:value="selectedStatus">
                                 <SelectTrigger>
                                     <SelectValue placeholder="All statuses" />
                                 </SelectTrigger>
