@@ -61,7 +61,13 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/twilio/logs',
     },
 ];
-
+const typeOptions = [
+    { value: 'all', label: 'All types' },
+    { value: 'voice', label: 'Voice' },
+    { value: 'sms', label: 'SMS' },
+    { value: 'sms_forward', label: 'SMS Forward' },
+];
+                  
 // Filters
 const searchQuery = ref('');
 const selectedType = ref('');
@@ -70,6 +76,13 @@ const selectedLog = ref<WebhookLog | null>(null);
 const showDetailsDialog = ref(false);
 
 // Computed properties
+const statusOptions = [
+    { value: 'all', label: 'All statuses' },
+    { value: 'received', label: 'Received' },
+    { value: 'processed', label: 'Processed' },
+    { value: 'sent', label: 'Sent' },
+    { value: 'error', label: 'Error' },
+];
 const filteredLogs = computed(() => {
     let filtered = props.logs.data;
 
@@ -298,10 +311,13 @@ const goToPage = (page: number) => {
                                     <SelectValue placeholder="All types" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="">All types</SelectItem>
-                                    <SelectItem value="voice">Voice</SelectItem>
-                                    <SelectItem value="sms">SMS</SelectItem>
-                                    <SelectItem value="sms_forward">SMS Forward</SelectItem>
+                                    <SelectItem
+                                                v-for="option in typeOptions"
+                                                :key="option.value"
+                                                :value="option.value"
+                                            >
+                                                {{ option.label }}
+                                    </SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -313,11 +329,14 @@ const goToPage = (page: number) => {
                                     <SelectValue placeholder="All statuses" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="">All statuses</SelectItem>
-                                    <SelectItem value="received">Received</SelectItem>
-                                    <SelectItem value="processed">Processed</SelectItem>
-                                    <SelectItem value="sent">Sent</SelectItem>
-                                    <SelectItem value="error">Error</SelectItem>
+                                    <SelectItem
+                                                v-for="option in statusOptions"
+                                                :key="option.value"
+                                                :value="option.value"
+                                            >
+                                                {{ option.label }}
+                                    </SelectItem>
+                                    
                                 </SelectContent>
                             </Select>
                         </div>
